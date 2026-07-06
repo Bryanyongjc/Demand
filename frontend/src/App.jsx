@@ -551,9 +551,7 @@ function AskView({ user, providers, onPings, goMarket }) {
             ))}
           </div>
           <h1 style={{ margin: 0, fontFamily: serif, fontWeight: 300, fontSize: "clamp(28px,5vw,52px)", lineHeight: 1.08, letterSpacing: "-0.02em", color: T.chrome }}>
-            <span style={{ display: "inline-block", background: mode === "ask" ? "linear-gradient(135deg, #F4F6F8 0%, #AFC6E6 60%, #F4F6F8 100%)" : METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
-              {mode === "offer" ? "What are you offering?" : "Campus life, handled."}
-            </span>
+            {mode === "offer" ? "What are you offering?" : "Campus life, handled."}
           </h1>
           <p style={{ fontFamily: sans, color: T.ash, fontSize: 14.5, marginTop: 14, maxWidth: 400, marginLeft: "auto", marginRight: "auto", lineHeight: 1.7 }}>
             {mode === "offer"
@@ -579,16 +577,6 @@ function AskView({ user, providers, onPings, goMarket }) {
         }}>
           {step === "input" ? (
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 2, paddingRight: 12, borderRight: `1px solid ${T.hairline}`, flexShrink: 0 }}>
-                <button onClick={() => fileRef.current.click()}
-                  style={{ position: "relative", background: "none", border: "none", cursor: "pointer", padding: "4px 6px", color: files.length > 0 ? T.ice : T.ash, fontSize: 16, lineHeight: 1, borderRadius: 6 }}>
-                  📎{files.length > 0 && <span style={{ position: "absolute", top: 2, right: 2, width: 6, height: 6, borderRadius: "50%", background: T.ice, display: "block" }} />}
-                </button>
-                <button onClick={handleVoice}
-                  style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 6px", color: recording ? "#E05252" : T.ash, fontSize: 16, lineHeight: 1, borderRadius: 6, animation: recording ? "pulse-mic 1s ease infinite" : "none" }}>
-                  🎙️
-                </button>
-              </div>
               <input value={text} onChange={e => setText(e.target.value)}
                 onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                 onKeyDown={e => { if (e.key === "Enter" && canSubmit) { e.preventDefault(); callRoute({}, files); } }}
