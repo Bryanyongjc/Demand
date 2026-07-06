@@ -550,8 +550,10 @@ function AskView({ user, providers, onPings, goMarket }) {
               </button>
             ))}
           </div>
-          <h1 style={{ margin: 0, fontFamily: serif, fontWeight: 300, fontSize: "clamp(28px,5vw,52px)", lineHeight: 1.08, letterSpacing: "-0.02em", background: mode === "ask" ? "linear-gradient(135deg, #F4F6F8 0%, #AFC6E6 60%, #F4F6F8 100%)" : METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
-            {mode === "offer" ? "What are you offering?" : "Campus life, handled."}
+          <h1 style={{ margin: 0, fontFamily: serif, fontWeight: 300, fontSize: "clamp(28px,5vw,52px)", lineHeight: 1.08, letterSpacing: "-0.02em", color: T.chrome }}>
+            <span style={{ display: "inline-block", background: mode === "ask" ? "linear-gradient(135deg, #F4F6F8 0%, #AFC6E6 60%, #F4F6F8 100%)" : METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
+              {mode === "offer" ? "What are you offering?" : "Campus life, handled."}
+            </span>
           </h1>
           <p style={{ fontFamily: sans, color: T.ash, fontSize: 14.5, marginTop: 14, maxWidth: 400, marginLeft: "auto", marginRight: "auto", lineHeight: 1.7 }}>
             {mode === "offer"
