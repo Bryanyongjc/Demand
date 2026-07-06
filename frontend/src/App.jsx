@@ -42,13 +42,21 @@ const CITIES = {
   kuala_lumpur:{ label: "Kuala Lumpur", currency: "MYR", symbol: "RM",  fee: 0.10 },
 };
 
-// ── Division colors ───────────────────────────────────────────────────────────
+// ── Division colors & labels ──────────────────────────────────────────────────
 const DIV_COLOR = {
   LOGISTICS: "#5B8AF0",
   CRAFT:     "#7ED97A",
   CREATIVE:  "#C47AE8",
   INTELLECT: "#E8B24A",
   SPACES:    "#E87A5B",
+};
+
+const DIV_LABEL = {
+  LOGISTICS: "Hauls",
+  CRAFT:     "Stuff",
+  CREATIVE:  "Gigs",
+  INTELLECT: "Tutoring",
+  SPACES:    "Sublets",
 };
 
 // ── Trust badge colors ────────────────────────────────────────────────────────
@@ -86,6 +94,16 @@ const TIER_STYLE = {
   },
 };
 
+
+const isStudentVerified = (email = "") => email.toLowerCase().endsWith(".edu");
+
+function getSemesterBanner() {
+  const m = new Date().getMonth();
+  if (m === 7 || m === 8)  return { msg: "Moving season is here — subleases and hauls in high demand", accent: "#E87A5B" };
+  if (m === 11 || m === 0) return { msg: "Finals & winter break — tutors and airport runs trending", accent: "#E8B24A" };
+  if (m === 3 || m === 4)  return { msg: "Semester wrap-up — subleases and furniture gigs trending", accent: "#7ED97A" };
+  return null;
+}
 
 function normPing(p) {
   return {
@@ -213,6 +231,8 @@ export default function App() {
         .dot{width:7px;height:7px;border-radius:50%;background:${T.ash};display:inline-block;animation:blink 1.4s ease infinite}
         .dot:nth-child(2){animation-delay:.2s}
         .dot:nth-child(3){animation-delay:.4s}
+        .card-lift { transition: transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .18s; }
+        .card-lift:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.45), 0 0 0 1px rgba(175,198,230,.12); }
       `}</style>
 
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(120% 80% at 50% -10%, rgba(175,198,230,.06), transparent 60%)" }} />
@@ -249,8 +269,11 @@ export default function App() {
             <span style={{ width: 1, height: 14, background: T.hairline }} />
             <div style={{ position: "relative" }}>
               <button onClick={() => setAvatarOpen(o => !o)}
-                style={{ width: 30, height: 30, borderRadius: "50%", border: `1px solid ${avatarOpen ? T.ice : T.steel}`, background: T.well, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, color: T.silver, flexShrink: 0, cursor: "pointer", padding: 0 }}>
+                style={{ position: "relative", width: 30, height: 30, borderRadius: "50%", border: `1px solid ${avatarOpen ? T.ice : T.steel}`, background: T.well, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: mono, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, color: T.silver, flexShrink: 0, cursor: "pointer", padding: 0 }}>
                 {getProfileInitials(user.email, profile?.full_name || "")}
+                {isStudentVerified(user.email) && (
+                  <span title="Verified Student" style={{ position: "absolute", bottom: -2, right: -2, width: 13, height: 13, borderRadius: "50%", background: "#F59E0B", border: `1.5px solid ${T.void}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 7, lineHeight: 1 }}>★</span>
+                )}
               </button>
               {avatarOpen && (
                 <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: T.carbon, border: `1px solid ${T.hairline}`, borderRadius: 12, overflow: "hidden", zIndex: 200, minWidth: 180, boxShadow: "0 8px 32px rgba(0,0,0,.5)" }}>
@@ -271,6 +294,13 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {(() => { const b = getSemesterBanner(); return b ? (
+          <div style={{ margin: "10px 0 0", padding: "9px 16px", background: `${b.accent}12`, border: `1px solid ${b.accent}30`, borderRadius: 10, display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: b.accent, flexShrink: 0, display: "inline-block" }} />
+            <span style={{ fontFamily: sans, fontSize: 13, color: b.accent }}>{b.msg}</span>
+          </div>
+        ) : null; })()}
 
         {booting ? (
           <div style={{ textAlign: "center", paddingTop: 80, fontFamily: mono, fontSize: 12, letterSpacing: 1.5, color: T.ash }}>
@@ -520,15 +550,17 @@ function AskView({ user, providers, onPings, goMarket }) {
               </button>
             ))}
           </div>
-          <h1 style={{ margin: 0, fontFamily: serif, fontWeight: 300, fontSize: "clamp(28px,5vw,48px)", lineHeight: 1.1, letterSpacing: "-0.01em", color: T.chrome }}>
-            {mode === "offer" ? "What are you offering?" : "What do you demand today?"}
+          <h1 style={{ margin: 0, fontFamily: serif, fontWeight: 300, fontSize: "clamp(28px,5vw,52px)", lineHeight: 1.08, letterSpacing: "-0.02em", background: mode === "ask" ? "linear-gradient(135deg, #F4F6F8 0%, #AFC6E6 60%, #F4F6F8 100%)" : METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
+            {mode === "offer" ? "What are you offering?" : "Campus life, handled."}
           </h1>
-          <p style={{ fontFamily: sans, color: T.ash, fontSize: 14, marginTop: 12, maxWidth: 360, marginLeft: "auto", marginRight: "auto", lineHeight: 1.65 }}>
-            {mode === "offer" ? "Skills, spaces, services — describe it naturally." : "Just describe it — no forms. Claude handles the rest."}
+          <p style={{ fontFamily: sans, color: T.ash, fontSize: 14.5, marginTop: 14, maxWidth: 400, marginLeft: "auto", marginRight: "auto", lineHeight: 1.7 }}>
+            {mode === "offer"
+              ? "List your skills, spaces, or services — AI writes the listing for you."
+              : "Tutoring, sublets, hauls, gigs — just describe what you need. No forms."}
           </p>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 16, fontFamily: mono, fontSize: 10, letterSpacing: 1, color: T.ash, opacity: 0.6 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 18, fontFamily: mono, fontSize: 10, letterSpacing: 1.2, color: T.ash, opacity: 0.5 }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: T.ice, display: "inline-block" }} />
-            POWERED BY CLAUDE · ANTHROPIC
+            POWERED BY CLAUDE · BUILT FOR CAMPUS
           </div>
         </div>
       )}
@@ -896,8 +928,10 @@ function MarketView({ user, profile, cityMeta, goChat }) {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
         <div>
-          <h2 style={{ fontWeight: 600, fontSize: 22, letterSpacing: "-0.02em", color: T.chrome, margin: "0 0 4px" }}>Marketplace</h2>
-          <p style={{ color: T.ash, fontSize: 14, margin: 0 }}>Open demands looking for someone.</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <h2 style={{ fontWeight: 700, fontSize: 22, letterSpacing: "-0.02em", color: T.chrome, margin: 0 }}>Campus Market</h2>
+          </div>
+          <p style={{ color: T.ash, fontSize: 13.5, margin: "4px 0 0" }}>Open demands from students looking for help.</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {workerCoords && (
@@ -920,8 +954,8 @@ function MarketView({ user, profile, cityMeta, goChat }) {
           const color  = d === "all" ? T.silver : DIV_COLOR[d];
           return (
             <button key={d} onClick={() => setDivFilter(d)}
-              style={{ fontFamily: mono, fontSize: 10.5, letterSpacing: 0.4, padding: "5px 13px", borderRadius: 16, border: `1px solid ${active ? color : T.hairline}`, background: active ? `${color}1A` : T.carbon, color: active ? color : T.ash, cursor: "pointer", transition: "all .15s" }}>
-              {d === "all" ? "All" : d}
+              style={{ fontFamily: sans, fontSize: 12, fontWeight: 500, letterSpacing: 0.2, padding: "6px 15px", borderRadius: 20, border: `1px solid ${active ? color : T.hairline}`, background: active ? `${color}1A` : T.carbon, color: active ? color : T.ash, cursor: "pointer", transition: "all .15s" }}>
+              {d === "all" ? "All" : DIV_LABEL[d] || d}
             </button>
           );
         })}
@@ -946,7 +980,7 @@ function MarketView({ user, profile, cityMeta, goChat }) {
           const isBidding  = d.status === "bidding";
           const divColor   = d.division ? DIV_COLOR[d.division] : T.ash;
           return (
-            <div key={d.id} className="rise" style={{ animationDelay: `${i * 50}ms`, background: T.card, border: `1px solid ${isBidding ? T.steel : T.hairline}`, borderRadius: 14, padding: 18, boxShadow: isBidding ? GLOW : "none" }}>
+            <div key={d.id} className="rise card-lift" style={{ animationDelay: `${i * 50}ms`, background: T.card, border: `1px solid ${isBidding ? T.steel : T.hairline}`, borderRadius: 16, padding: 20, boxShadow: isBidding ? GLOW : "none" }}>
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, color: T.chrome, lineHeight: 1.4, flex: 1, marginRight: 12 }}>
@@ -972,7 +1006,10 @@ function MarketView({ user, profile, cityMeta, goChat }) {
               {/* Tags */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
                 {d.division && (
-                  <span style={{ fontFamily: mono, fontSize: 10, color: divColor, background: `${divColor}18`, border: `1px solid ${divColor}40`, borderRadius: 6, padding: "3px 8px" }}>{d.division}</span>
+                  <span style={{ fontFamily: sans, fontSize: 11, fontWeight: 500, color: divColor, background: `${divColor}18`, border: `1px solid ${divColor}40`, borderRadius: 8, padding: "3px 10px" }}>{DIV_LABEL[d.division] || d.division}</span>
+                )}
+                {isOwn && isStudentVerified(user.email) && (
+                  <span title="Verified Student" style={{ fontFamily: sans, fontSize: 11, fontWeight: 600, color: "#F59E0B", background: "#F59E0B12", border: "1px solid #F59E0B40", borderRadius: 8, padding: "3px 10px" }}>★ Verified Student</span>
                 )}
                 {d.budget && <span style={{ fontFamily: mono, fontSize: 11, color: T.silver, background: T.carbon, border: `1px solid ${T.hairline}`, borderRadius: 6, padding: "3px 8px" }}>{cityMeta.symbol}{d.budget}</span>}
                 {d.location && <span style={{ fontFamily: mono, fontSize: 11, color: T.silver, background: T.carbon, border: `1px solid ${T.hairline}`, borderRadius: 6, padding: "3px 8px" }}>{d.location}</span>}
@@ -1169,11 +1206,13 @@ function SettingsView({ user, profile, city, onProfileUpdate }) {
   const [savingName, setSavingName] = useState(false);
   const [nameSaved,  setNameSaved]  = useState(false);
 
-  // Major / campus badge
+  // Major / campus badge / university
   const [major, setMajor]           = useState(profile?.major || "");
+  const [university, setUniversity] = useState(profile?.university || "");
   const [savingMajor, setSavingMajor] = useState(false);
   const [majorSaved,  setMajorSaved]  = useState(false);
   const badge = profile?.badge;
+  const studentVerified = isStudentVerified(user.email);
 
   // Subscription cancel
   const [cancelling, setCancelling]   = useState(false);
@@ -1199,7 +1238,7 @@ function SettingsView({ user, profile, city, onProfileUpdate }) {
     try {
       const up = await apiFetch(`/api/profile/${user.id}`, {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ major: major.trim() }),
+        body: JSON.stringify({ major: major.trim(), university: university.trim() }),
       });
       if (onProfileUpdate) onProfileUpdate(up);
       setMajorSaved(true); setTimeout(() => setMajorSaved(false), 2500);
@@ -1254,15 +1293,32 @@ function SettingsView({ user, profile, city, onProfileUpdate }) {
         </div>
       </div>
 
-      {/* Campus badge */}
-      <div style={card}>
+      {/* Student verification + campus info */}
+      <div style={{ ...card, border: `1px solid ${studentVerified ? "#F59E0B40" : T.hairline}`, background: studentVerified ? "rgba(245,158,11,.04)" : T.carbon }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <label style={{ ...lbl, marginBottom: 0 }}>CAMPUS BADGE</label>
-          {badge
-            ? <span style={{ fontFamily: mono, fontSize: 11, color: BADGE_COLOR[badge], background: `${BADGE_COLOR[badge]}18`, border: `1px solid ${BADGE_COLOR[badge]}50`, borderRadius: 20, padding: "3px 11px" }}>{badge}</span>
-            : <span style={{ fontFamily: mono, fontSize: 11, color: T.ash }}>No badge · sign up with a .edu email</span>
+          <div>
+            <label style={{ ...lbl, marginBottom: 2 }}>STUDENT STATUS</label>
+            {studentVerified
+              ? <div style={{ fontFamily: sans, fontSize: 13, color: "#F59E0B", fontWeight: 600 }}>★ Verified Student · {user.email.split("@")[1]}</div>
+              : <div style={{ fontFamily: sans, fontSize: 12.5, color: T.ash }}>Sign up with a .edu email to get your student star</div>
+            }
+          </div>
+          {studentVerified
+            ? <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1, color: "#F59E0B", background: "#F59E0B18", border: "1px solid #F59E0B40", borderRadius: 20, padding: "4px 11px" }}>VERIFIED</span>
+            : <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1, color: T.ash, background: T.well, border: `1px solid ${T.hairline}`, borderRadius: 20, padding: "4px 11px" }}>UNVERIFIED</span>
           }
         </div>
+
+        {badge && (
+          <div style={{ marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${T.hairline}` }}>
+            <label style={{ ...lbl, marginBottom: 6 }}>CAMPUS BADGE</label>
+            <span style={{ fontFamily: mono, fontSize: 11, color: BADGE_COLOR[badge], background: `${BADGE_COLOR[badge]}18`, border: `1px solid ${BADGE_COLOR[badge]}50`, borderRadius: 20, padding: "3px 11px" }}>{badge}</span>
+          </div>
+        )}
+
+        <label style={lbl}>UNIVERSITY</label>
+        <input value={university} onChange={e => setUniversity(e.target.value)} placeholder="e.g. NYU, Columbia, UCLA" style={{ ...field, width: "100%", boxSizing: "border-box", marginBottom: 12 }} />
+
         <label style={lbl}>MAJOR</label>
         <input value={major} onChange={e => setMajor(e.target.value)} placeholder="Computer Science" style={{ ...field, width: "100%", boxSizing: "border-box", marginBottom: 12 }} />
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

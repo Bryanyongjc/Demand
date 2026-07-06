@@ -200,6 +200,7 @@ class ProfileIn(BaseModel):
     is_worker: Optional[bool] = None
     full_name: Optional[str] = None
     major: Optional[str] = None
+    university: Optional[str] = None
     is_demand_plus: Optional[bool] = None
     stripe_connect_id: Optional[str] = None
     payouts_enabled: Optional[bool] = None
@@ -576,6 +577,8 @@ def update_profile(user_id: str, body: ProfileIn):
         update["full_name"] = body.full_name
     if body.major is not None:
         update["major"] = body.major
+    if body.university is not None:
+        update["university"] = body.university
     if body.is_demand_plus is not None:
         update["is_demand_plus"] = body.is_demand_plus
         # TODO: Stripe — create/cancel Subscription for the user here
