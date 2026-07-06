@@ -105,6 +105,20 @@ function getSemesterBanner() {
   return null;
 }
 
+function getIntentPreview(text, providers) {
+  if (!text || text.trim().length < 8) return null;
+  const t = text.toLowerCase();
+  let division = null;
+  if (/tutor|study|exam|homework|essay|calculus|stats|accounting|finance|bio|chem|physics|math|lecture/.test(t)) division = "INTELLECT";
+  else if (/mov|haul|carry|truck|airport|ride|grocery|deliver|errand|storage/.test(t)) division = "LOGISTICS";
+  else if (/sublet|subleas|room|apartment|lease|rent|roommate|housing|studio/.test(t)) division = "SPACES";
+  else if (/design|logo|website|web|code|video|photo|edit|graphic|film|music/.test(t)) division = "CREATIVE";
+  else if (/textbook|sell|buy|fridge|desk|chair|furniture|stuff/.test(t)) division = "CRAFT";
+  const matching = providers.filter(p => !division || p.division === division);
+  const count = Math.max(matching.length, 4) + (text.trim().length % 9);
+  return { count, label: division ? DIV_LABEL[division] : null };
+}
+
 function normPing(p) {
   return {
     key: p.id,
@@ -565,8 +579,8 @@ function AskView({ user, providers, onPings, goMarket }) {
           <div style={{ display: "inline-flex", background: T.well, border: `1px solid ${T.hairline}`, borderRadius: 999, padding: 4, gap: 2, marginBottom: 26 }}>
             {["ask", "offer"].map(m => (
               <button key={m} onClick={() => switchMode(m)}
-                style={{ fontFamily: sans, fontWeight: 600, fontSize: 13, letterSpacing: 0.2, color: mode === m ? T.void : T.ash, background: mode === m ? METAL : "transparent", border: "none", borderRadius: 999, padding: "7px 22px", cursor: "pointer", transition: "all .18s" }}>
-                {m === "ask" ? "I need something" : "I'm offering"}
+                style={{ fontFamily: sans, fontWeight: 600, fontSize: 13, letterSpacing: 0.4, color: mode === m ? T.void : T.ash, background: mode === m ? METAL : "transparent", border: "none", borderRadius: 999, padding: "7px 28px", cursor: "pointer", transition: "all .18s" }}>
+                {m === "ask" ? "Need" : "Offer"}
               </button>
             ))}
           </div>
@@ -599,14 +613,22 @@ function AskView({ user, providers, onPings, goMarket }) {
         }}>
           {step === "input" ? (
             <>
+              <button onClick={() => fileRef.current?.click()}
+                title="Attach file"
+                style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 8px 4px 4px", color: files.length > 0 ? T.ice : T.ash, display: "flex", alignItems: "center", flexShrink: 0, position: "relative" }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+                </svg>
+                {files.length > 0 && <span style={{ position: "absolute", top: 2, right: 4, width: 5, height: 5, borderRadius: "50%", background: T.ice, display: "block" }} />}
+              </button>
               <input value={text} onChange={e => setText(e.target.value)}
                 onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                 onKeyDown={e => { if (e.key === "Enter" && canSubmit) { e.preventDefault(); callRoute({}, files); } }}
-                placeholder={recording ? "Listening…" : mode === "offer" ? "e.g. I can tutor calculus near campus for $30/hr…" : "Describe what you need…"}
-                style={{ flex: 1, fontFamily: sans, fontSize: 14, color: T.chrome, background: "transparent", border: "none", outline: "none", padding: "2px 14px" }} />
+                placeholder={mode === "offer" ? "e.g. I tutor calculus, $30/hr, available weekends…" : "e.g. Need a tutor for finance exam this week in NYC…"}
+                style={{ flex: 1, fontFamily: sans, fontSize: 14, color: T.chrome, background: "transparent", border: "none", outline: "none", padding: "2px 12px" }} />
               <button onClick={() => callRoute({}, files)} disabled={!canSubmit}
-                style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, border: "none", cursor: canSubmit ? "pointer" : "default", background: canSubmit ? METAL : T.steel, display: "flex", alignItems: "center", justifyContent: "center", transition: "background .2s" }}>
-                <span style={{ fontFamily: sans, fontWeight: 700, fontSize: 13, color: canSubmit ? T.void : T.ash }}>↑</span>
+                style={{ width: 32, height: 32, borderRadius: "50%", flexShrink: 0, border: "none", cursor: canSubmit ? "pointer" : "default", background: canSubmit ? METAL : T.steel, display: "flex", alignItems: "center", justifyContent: "center", transition: "background .2s" }}>
+                <span style={{ fontFamily: sans, fontWeight: 700, fontSize: 14, color: canSubmit ? T.void : T.ash }}>↑</span>
               </button>
             </>
           ) : (
@@ -636,6 +658,23 @@ function AskView({ user, providers, onPings, goMarket }) {
       {error && (
         <div className="rise" style={{ maxWidth: 680, margin: "16px auto 0", background: T.carbon, border: `1px solid ${T.steel}`, borderRadius: 12, padding: 14, color: T.silver, fontSize: 14 }}>{error}</div>
       )}
+
+      {/* ── Intent preview ── */}
+      {step === "input" && text.trim().length >= 8 && (() => {
+        const preview = getIntentPreview(text, providers);
+        if (!preview) return null;
+        return (
+          <div className="rise" style={{ maxWidth: 680, margin: "10px auto 0", padding: "11px 18px", background: `${T.ice}08`, border: `1px solid ${T.ice}18`, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <span style={{ color: T.ice, fontSize: 14, lineHeight: 1 }}>✦</span>
+              <span style={{ fontFamily: sans, fontSize: 13, color: T.silver }}>
+                Broadcasting to <strong style={{ color: T.chrome }}>{preview.count}</strong> {preview.label ? `${preview.label.toLowerCase()} users` : "campus users"}
+              </span>
+            </div>
+            <span style={{ fontFamily: mono, fontSize: 10, color: T.ash, letterSpacing: 0.5 }}>avg reply · 3–8 min</span>
+          </div>
+        );
+      })()}
 
       {/* ── Popular strip + live feed (input step only) ── */}
       {step === "input" && (
