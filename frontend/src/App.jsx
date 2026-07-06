@@ -825,27 +825,48 @@ function AskView({ user, providers, onPings, goMarket }) {
           {/* ── Match result ── */}
           {step === "matched" && matchResult && (
             <div>
-              <div className="rise" style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
-                <AiAvatar />
-                <div style={{ background: T.carbon, border: `1px solid ${T.hairline}`, borderRadius: "4px 18px 18px 18px", padding: "12px 16px" }}>
-                  <p style={{ margin: 0, fontSize: 15, color: T.chrome, lineHeight: 1.65 }}>
-                    You're live on the market{matchResult.matches?.length ? ` — ${matchResult.matches.length} ${matchResult.matches.length === 1 ? "person" : "people"} pinged` : ""}. 🎉
-                  </p>
+              {/* Broadcast confirmation card */}
+              <div className="rise" style={{ marginLeft: 38, marginBottom: 16 }}>
+                <div style={{ background: "linear-gradient(135deg, rgba(175,198,230,.08) 0%, rgba(126,179,232,.04) 100%)", border: `1px solid ${T.ice}30`, borderRadius: 16, padding: "18px 20px" }}>
+                  <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1.5, color: T.ice, marginBottom: 14 }}>BROADCAST SENT</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+                    {[
+                      { icon: "✔", label: "Live on campus network", color: "#4ADE80" },
+                      { icon: "✔", label: `Sent to ${providers.length} users on platform`, color: "#4ADE80" },
+                      { icon: "✔", label: matchResult.matches?.length
+                          ? `${matchResult.matches.length} ${matchResult.matches.length === 1 ? "match" : "matches"} found instantly`
+                          : "Posted — replies coming soon", color: matchResult.matches?.length ? "#4ADE80" : T.ash },
+                    ].map((row, i) => (
+                      <div key={i} className="rise" style={{ animationDelay: `${i * 120}ms`, display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 13, color: row.color, flexShrink: 0 }}>{row.icon}</span>
+                        <span style={{ fontFamily: sans, fontSize: 13.5, color: T.silver }}>{row.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.hairline}`, fontFamily: mono, fontSize: 10, color: T.ash }}>
+                    avg first reply · 3–8 min
+                  </div>
                 </div>
               </div>
 
+              {/* Matched providers */}
               {matchResult.matches?.length > 0 && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginLeft: 38, marginBottom: 18 }}>
+                  <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1.2, color: T.ash, marginBottom: 2 }}>TOP MATCHES</div>
                   {matchResult.matches.map((m, i) => {
                     const p = byId(m.id); if (!p) return null;
+                    const dc = p.division ? DIV_COLOR[p.division] : T.ash;
                     return (
-                      <div key={m.id} className="rise" style={{ animationDelay: `${i * 60}ms`, background: T.card, border: `1px solid ${T.steel}`, borderRadius: 14, padding: 16, boxShadow: GLOW }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                          <span style={{ fontWeight: 600, fontSize: 15, color: T.chrome }}>{p.name}</span>
-                          <span style={{ fontFamily: mono, fontSize: 11, color: T.ice, border: `1px solid ${T.steel}`, borderRadius: 6, padding: "2px 8px" }}>{m.confidence}% fit</span>
+                      <div key={m.id} className="rise card-lift" style={{ animationDelay: `${i * 60}ms`, background: T.card, border: `1px solid ${T.steel}`, borderRadius: 14, padding: 16, boxShadow: GLOW }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                          <div>
+                            <span style={{ fontWeight: 600, fontSize: 15, color: T.chrome }}>{p.name}</span>
+                            {p.division && <span style={{ marginLeft: 8, fontFamily: sans, fontSize: 10.5, color: dc, background: `${dc}18`, border: `1px solid ${dc}30`, borderRadius: 6, padding: "2px 7px" }}>{DIV_LABEL[p.division] || p.division}</span>}
+                          </div>
+                          <span style={{ fontFamily: mono, fontSize: 11, color: T.ice, border: `1px solid ${T.steel}`, borderRadius: 6, padding: "2px 8px", flexShrink: 0 }}>{m.confidence}% fit</span>
                         </div>
                         <div style={{ fontSize: 13.5, color: T.silver, marginBottom: 8, lineHeight: 1.45 }}>{m.reason}</div>
-                        <div style={{ fontFamily: mono, fontSize: 11, color: T.ash }}>from {sym}{p.min_rate} · {p.location} · {p.remote_ok ? "remote ok" : "in person"}</div>
+                        <div style={{ fontFamily: mono, fontSize: 11, color: T.ash }}>from ${p.min_rate} · {p.location} · {p.remote_ok ? "remote ok" : "in person"}</div>
                       </div>
                     );
                   })}
@@ -854,7 +875,7 @@ function AskView({ user, providers, onPings, goMarket }) {
 
               <div style={{ marginLeft: 38, display: "flex", gap: 12, alignItems: "center" }}>
                 <button onClick={reset} style={{ fontFamily: sans, fontSize: 13.5, fontWeight: 500, color: T.void, background: METAL, border: "none", borderRadius: 9, padding: "9px 18px", cursor: "pointer" }}>New request</button>
-                <button onClick={goMarket} style={{ fontFamily: sans, fontSize: 13.5, color: T.silver, background: "none", border: "none", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>See it on market →</button>
+                <button onClick={goMarket} style={{ fontFamily: sans, fontSize: 13.5, color: T.silver, background: "none", border: "none", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}>See it on Browse →</button>
               </div>
             </div>
           )}

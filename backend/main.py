@@ -130,23 +130,52 @@ Set "multi_select": true when the question allows choosing multiple options simu
 When next_missing_parameter is "PHOTOS", suggested_buttons must include at least [{"label": "Skip for now", "value": "no_photos"}]."""
 
 SEED_PROVIDERS = [
-    {"id": "p01", "name": "Maya", "blurb": "Videographer and editor. Short promo videos, social reels, event recap films and product ads. Filming, color grading, motion graphics.", "min_rate": 120, "location": "nyc", "remote_ok": False},
-    {"id": "p02", "name": "Daniel", "blurb": "Math and physics tutor. Calculus 1 and 2, linear algebra, intro physics for college students. Exam prep and problem sets.", "min_rate": 40, "location": "nyc", "remote_ok": True},
-    {"id": "p03", "name": "Priya", "blurb": "Graphic designer. Logos, brand identity kits, packaging, posters, social graphics. Clean branding for new businesses and clothing lines.", "min_rate": 80, "location": "nyc", "remote_ok": True},
-    {"id": "p04", "name": "Marcus", "blurb": "Moving and heavy lifting. Furniture, couches, boxes, appliances between apartments. Have a van, same-day local moves.", "min_rate": 60, "location": "nyc", "remote_ok": False},
-    {"id": "p05", "name": "Sofia", "blurb": "Dog walker and pet sitter. Daily walks, feeding, overnight sitting for dogs and cats.", "min_rate": 25, "location": "nyc", "remote_ok": False},
-    {"id": "p06", "name": "Arjun", "blurb": "Full stack web developer. Websites and web apps with React and Node, landing pages, e-commerce stores, small business sites.", "min_rate": 90, "location": "nyc", "remote_ok": True},
-    {"id": "p07", "name": "Lena", "blurb": "Portrait and event photographer. Headshots, parties, weddings, product photography. Studio and on location, includes editing.", "min_rate": 150, "location": "nyc", "remote_ok": False},
-    {"id": "p08", "name": "Tom", "blurb": "Social media manager. Runs Instagram and TikTok, content calendars, captions, engagement growth for small brands and cafes.", "min_rate": 50, "location": "nyc", "remote_ok": True},
-    {"id": "p09", "name": "Grace", "blurb": "Piano teacher, ABRSM trained. Beginner to grade 8 piano, music theory, exam prep for kids and adults. In person or online.", "min_rate": 45, "location": "nyc", "remote_ok": True},
-    {"id": "p10", "name": "Kevin", "blurb": "Event staff and catering help. Barista, server, bartender, setup crew for parties and events. Drinks, food service, cleanup.", "min_rate": 30, "location": "nyc", "remote_ok": False},
+    # ── NYC · Tutoring ────────────────────────────────────────────────────────
+    {"id": "p01", "name": "Daniel", "division": "INTELLECT", "blurb": "Math and physics tutor. Calculus 1/2, linear algebra, intro physics for college students. Exam prep and weekly problem sets.", "min_rate": 40, "location": "nyc", "remote_ok": True},
+    {"id": "p02", "name": "Grace", "division": "INTELLECT", "blurb": "Accounting and finance tutor. Financial statements, managerial accounting, corporate finance, CFA prep. NYU Stern grad.", "min_rate": 45, "location": "nyc", "remote_ok": True},
+    {"id": "p03", "name": "Aisha", "division": "INTELLECT", "blurb": "Biology and chemistry tutor. Organic chemistry, cell biology, MCAT prep. Pre-med at Columbia. Clear explanations, high pass rate.", "min_rate": 35, "location": "nyc", "remote_ok": True},
+    {"id": "p04", "name": "James", "division": "INTELLECT", "blurb": "CS and coding tutor. Python, Java, data structures, algorithms, LeetCode prep. Available evenings and weekends.", "min_rate": 55, "location": "nyc", "remote_ok": True},
+    # ── NYC · Hauls / Logistics ────────────────────────────────────────────────
+    {"id": "p05", "name": "Marcus", "division": "LOGISTICS", "blurb": "Moving and heavy lifting. Furniture, couches, boxes between apartments. Have a van. Same-day dorm and apartment moves near NYU/Columbia.", "min_rate": 60, "location": "nyc", "remote_ok": False},
+    {"id": "p06", "name": "Dre", "division": "LOGISTICS", "blurb": "Airport rides, grocery runs, Costco hauls, IKEA pickups. Flexible schedule, fits 4 people plus luggage. Available 5AM–midnight.", "min_rate": 30, "location": "nyc", "remote_ok": False},
+    {"id": "p07", "name": "Sofia", "division": "LOGISTICS", "blurb": "Errand runner and delivery help. Pharmacy, grocery, laundry drop-off, package pickup. Fast turnaround in Manhattan and Brooklyn.", "min_rate": 20, "location": "nyc", "remote_ok": False},
+    # ── NYC · Creative / Gigs ──────────────────────────────────────────────────
+    {"id": "p08", "name": "Maya", "division": "CREATIVE", "blurb": "Videographer and editor. Social reels, event recap, YouTube videos, short films. Filming + post-production included.", "min_rate": 120, "location": "nyc", "remote_ok": False},
+    {"id": "p09", "name": "Priya", "division": "CREATIVE", "blurb": "Graphic designer. Logos, brand kits, posters, pitch decks, social graphics. Figma native, fast turnaround.", "min_rate": 80, "location": "nyc", "remote_ok": True},
+    {"id": "p10", "name": "Arjun", "division": "CREATIVE", "blurb": "Full stack web developer. React, Next.js, landing pages, e-commerce stores. Portfolios and startup MVPs.", "min_rate": 90, "location": "nyc", "remote_ok": True},
+    {"id": "p11", "name": "Lena", "division": "CREATIVE", "blurb": "Portrait and event photographer. Headshots, parties, graduation, product photography. On location, editing included.", "min_rate": 150, "location": "nyc", "remote_ok": False},
+    # ── NYC · Stuff ───────────────────────────────────────────────────────────
+    {"id": "p12", "name": "Kevin", "division": "CRAFT", "blurb": "Selling dorm furniture, mini fridges, microwaves, textbooks. End of semester deals, pickup near NYU dorms. No delivery.", "min_rate": 10, "location": "nyc", "remote_ok": False},
+    {"id": "p13", "name": "Tom", "division": "CRAFT", "blurb": "Textbook buyer and seller. All majors, all editions. Fair prices, instant pickup. Near Columbia and Fordham.", "min_rate": 5, "location": "nyc", "remote_ok": False},
+    # ── NYC · Sublets ─────────────────────────────────────────────────────────
+    {"id": "p14", "name": "Natalie", "division": "SPACES", "blurb": "Subletting 1BR near NYU for summer. Fully furnished, utilities included, cats ok. $1,800/mo, June–August.", "min_rate": 1800, "location": "nyc", "remote_ok": False},
+    {"id": "p15", "name": "Ben", "division": "SPACES", "blurb": "Private room in 3BR apartment near Columbia. Shared kitchen and laundry, quiet house, no smoking. $950/mo flexible dates.", "min_rate": 950, "location": "nyc", "remote_ok": False},
+    # ── KL · Tutoring ─────────────────────────────────────────────────────────
+    {"id": "p16", "name": "Wei Liang", "division": "INTELLECT", "blurb": "Accounting and finance tutor in KL. ACCA, CPA, corporate finance, financial modelling. UM and Sunway students welcome.", "min_rate": 60, "location": "kuala_lumpur", "remote_ok": True},
+    {"id": "p17", "name": "Nurul", "division": "INTELLECT", "blurb": "BM and English writing tutor. Essays, reports, SPM and STPM prep, university assignments. Clear and patient.", "min_rate": 40, "location": "kuala_lumpur", "remote_ok": True},
+    {"id": "p18", "name": "Raj", "division": "INTELLECT", "blurb": "Maths and physics tutor in KL. A-levels, foundation, degree level. Exam prep, weekly sessions, past papers.", "min_rate": 50, "location": "kuala_lumpur", "remote_ok": True},
+    # ── KL · Hauls ────────────────────────────────────────────────────────────
+    {"id": "p19", "name": "Haziq", "division": "LOGISTICS", "blurb": "Moving and transport in KL. Van rental with driver. Apartment moves, college dorm move-in, IKEA runs. KL and PJ area.", "min_rate": 80, "location": "kuala_lumpur", "remote_ok": False},
+    {"id": "p20", "name": "Amirah", "division": "LOGISTICS", "blurb": "Airport transfers and rides in KL. KLIA and KLIA2, Grab backup, reliable and punctual. Book 24hrs in advance.", "min_rate": 50, "location": "kuala_lumpur", "remote_ok": False},
+    # ── KL · Creative ─────────────────────────────────────────────────────────
+    {"id": "p21", "name": "Jia Xin", "division": "CREATIVE", "blurb": "Freelance designer in KL. Logos, banners, event flyers, social media graphics. Canva and Illustrator. Fast and affordable.", "min_rate": 50, "location": "kuala_lumpur", "remote_ok": True},
+    {"id": "p22", "name": "Fariz", "division": "CREATIVE", "blurb": "Content creator and video editor. Reels, TikToks, YouTube shorts. Shooting and editing for KL-based brands and creators.", "min_rate": 80, "location": "kuala_lumpur", "remote_ok": False},
+    # ── KL · Sublets ──────────────────────────────────────────────────────────
+    {"id": "p23", "name": "Mei Ling", "division": "SPACES", "blurb": "Room for sublet near UM campus in KL. Furnished, air-cond, high-speed wifi. RM500/mo, utilities excluded.", "min_rate": 500, "location": "kuala_lumpur", "remote_ok": False},
+    # ── HK · Tutoring ─────────────────────────────────────────────────────────
+    {"id": "p24", "name": "Chloe", "division": "INTELLECT", "blurb": "Finance and economics tutor in HK. HKUST and HKU students, CFA level 1, corporate finance, micro/macro. Online or in person.", "min_rate": 200, "location": "hong_kong", "remote_ok": True},
+    {"id": "p25", "name": "Ivan", "division": "INTELLECT", "blurb": "Maths and programming tutor. Python, data science, statistics, calculus. HKU PhD student. Flexible schedule.", "min_rate": 180, "location": "hong_kong", "remote_ok": True},
+    # ── HK · Hauls ────────────────────────────────────────────────────────────
+    {"id": "p26", "name": "Danny", "division": "LOGISTICS", "blurb": "Moving and delivery help in HK. Apartment moves, furniture assembly, airport pickup and drop-off. Kowloon and HK Island.", "min_rate": 150, "location": "hong_kong", "remote_ok": False},
+    # ── HK · Creative ─────────────────────────────────────────────────────────
+    {"id": "p27", "name": "Lily", "division": "CREATIVE", "blurb": "Freelance graphic designer in HK. Brand identity, social content, pitch decks. Bilingual Chinese/English. Remote-friendly.", "min_rate": 250, "location": "hong_kong", "remote_ok": True},
+    # ── HK · Sublets ──────────────────────────────────────────────────────────
+    {"id": "p28", "name": "Jason", "division": "SPACES", "blurb": "Subletting room in shared flat near HKUST. Fully furnished, MTR accessible, utilities included. HK$4,500/mo.", "min_rate": 4500, "location": "hong_kong", "remote_ok": False},
 ]
 
 
 def _seed_providers():
-    existing = supabase.table("providers").select("id").limit(1).execute()
-    if not existing.data:
-        supabase.table("providers").insert(SEED_PROVIDERS).execute()
+    supabase.table("providers").upsert(SEED_PROVIDERS, on_conflict="id").execute()
 
 
 @asynccontextmanager
