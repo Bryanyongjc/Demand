@@ -240,7 +240,21 @@ export default function App() {
       <div style={{ position: "relative", maxWidth: 1440, margin: "0 auto", padding: "0 40px" }}>
         {/* Nav */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 60, borderBottom: `1px solid ${T.hairline}` }}>
-          <span onClick={() => setTab("ask")} style={{ fontFamily: sans, fontWeight: 700, fontSize: 15, letterSpacing: 3, background: METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", cursor: "pointer" }}>DEMAND</span>
+          <div onClick={() => setTab("ask")} style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer" }}>
+            <svg width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="64" rx="14" fill="#08090B"/>
+              <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="#23272B" strokeWidth="1"/>
+              <text x="32" y="46" textAnchor="middle" fontFamily="Georgia, serif" fontSize="42" fontWeight="400" letterSpacing="-2" fill="url(#navG)">D</text>
+              <defs>
+                <linearGradient id="navG" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#D6E8FF"/>
+                  <stop offset="50%" stopColor="#7EB3E8"/>
+                  <stop offset="100%" stopColor="#AFC6E6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span style={{ fontFamily: sans, fontWeight: 700, fontSize: 15, letterSpacing: 3, background: METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>DEMAND</span>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
             {navBtn("market", "Browse")}
             {navBtn("chat",   "Messages")}
