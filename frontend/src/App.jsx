@@ -613,14 +613,6 @@ function AskView({ user, providers, onPings, goMarket }) {
         }}>
           {step === "input" ? (
             <>
-              <button onClick={() => fileRef.current?.click()}
-                title="Attach file"
-                style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 8px 4px 4px", color: files.length > 0 ? T.ice : T.ash, display: "flex", alignItems: "center", flexShrink: 0, position: "relative" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-                </svg>
-                {files.length > 0 && <span style={{ position: "absolute", top: 2, right: 4, width: 5, height: 5, borderRadius: "50%", background: T.ice, display: "block" }} />}
-              </button>
               <input value={text} onChange={e => setText(e.target.value)}
                 onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
                 onKeyDown={e => { if (e.key === "Enter" && canSubmit) { e.preventDefault(); callRoute({}, files); } }}
@@ -642,17 +634,6 @@ function AskView({ user, providers, onPings, goMarket }) {
           )}
         </div>
 
-        {/* Initial file chips */}
-        {files.length > 0 && step === "input" && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8, paddingLeft: 14 }}>
-            {files.map((f, i) => (
-              <span key={i} style={{ fontFamily: mono, fontSize: 10, color: T.ice, background: `${T.ice}14`, border: `1px solid ${T.ice}30`, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
-                {f.name.length > 24 ? f.name.slice(0, 22) + "…" : f.name}
-                <button onClick={() => setFiles(prev => prev.filter((_, j) => j !== i))} style={{ background: "none", border: "none", cursor: "pointer", color: T.ash, fontSize: 11, padding: 0 }}>×</button>
-              </span>
-            ))}
-          </div>
-        )}
       </div>
 
       {error && (
@@ -751,27 +732,28 @@ function AskView({ user, providers, onPings, goMarket }) {
             <>
               <AiBubble text={followUp.conversational_response} />
 
-              {/* Photo upload */}
-              <div style={{ marginLeft: 38 }}>
-                {followUpFiles.length > 0 ? (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 4 }}>
-                    {followUpFiles.map((f, i) => (
-                      <span key={i} style={{ fontFamily: mono, fontSize: 10, color: T.ice, background: `${T.ice}14`, border: `1px solid ${T.ice}30`, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
-                        {f.name.length > 22 ? f.name.slice(0, 20) + "…" : f.name}
-                        <button onClick={() => setFollowUpFiles(prev => prev.filter((_, j) => j !== i))} style={{ background: "none", border: "none", cursor: "pointer", color: T.ash, fontSize: 11, padding: 0 }}>×</button>
-                      </span>
-                    ))}
+              {/* Photo upload — only when AI asks for it */}
+              {followUp.next_missing_parameter === "PHOTOS" && (
+                <div style={{ marginLeft: 38 }}>
+                  {followUpFiles.length > 0 ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 4 }}>
+                      {followUpFiles.map((f, i) => (
+                        <span key={i} style={{ fontFamily: mono, fontSize: 10, color: T.ice, background: `${T.ice}14`, border: `1px solid ${T.ice}30`, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
+                          {f.name.length > 22 ? f.name.slice(0, 20) + "…" : f.name}
+                          <button onClick={() => setFollowUpFiles(prev => prev.filter((_, j) => j !== i))} style={{ background: "none", border: "none", cursor: "pointer", color: T.ash, fontSize: 11, padding: 0 }}>×</button>
+                        </span>
+                      ))}
+                      <button onClick={() => followUpPhotoRef.current?.click()}
+                        style={{ fontFamily: mono, fontSize: 10, color: T.ash, background: "transparent", border: `1px dashed ${T.hairline}`, borderRadius: 6, padding: "3px 10px", cursor: "pointer" }}>+ more</button>
+                    </div>
+                  ) : (
                     <button onClick={() => followUpPhotoRef.current?.click()}
-                      style={{ fontFamily: mono, fontSize: 10, color: T.ash, background: "transparent", border: `1px dashed ${T.hairline}`, borderRadius: 6, padding: "3px 10px", cursor: "pointer" }}>+ more</button>
-                  </div>
-                ) : (
-                  <button onClick={() => followUpPhotoRef.current?.click()}
-                    style={{ fontFamily: sans, fontSize: 12.5, color: followUp.next_missing_parameter === "PHOTOS" ? T.chrome : T.ash, background: "transparent", border: `1px ${followUp.next_missing_parameter === "PHOTOS" ? "solid " + T.steel : "dashed " + T.hairline}`, borderRadius: 8, padding: "6px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, marginBottom: 2 }}>
-                    <span>📷</span>
-                    {followUp.next_missing_parameter === "PHOTOS" ? "Add photos" : "Add photos (optional)"}
-                  </button>
-                )}
-              </div>
+                      style={{ fontFamily: sans, fontSize: 13, color: T.chrome, background: "transparent", border: `1px solid ${T.steel}`, borderRadius: 8, padding: "7px 16px", cursor: "pointer", display: "flex", alignItems: "center", gap: 7 }}>
+                      <span>📷</span> Add photos
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Quick-tap buttons */}
               {followUp.suggested_buttons?.length > 0 && (
