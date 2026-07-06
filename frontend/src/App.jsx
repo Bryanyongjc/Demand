@@ -240,12 +240,11 @@ export default function App() {
       <div style={{ position: "relative", maxWidth: 1440, margin: "0 auto", padding: "0 40px" }}>
         {/* Nav */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 60, borderBottom: `1px solid ${T.hairline}` }}>
-          <span style={{ fontFamily: sans, fontWeight: 700, fontSize: 15, letterSpacing: 3, background: METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>DEMAND</span>
+          <span onClick={() => setTab("ask")} style={{ fontFamily: sans, fontWeight: 700, fontSize: 15, letterSpacing: 3, background: METAL, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", cursor: "pointer" }}>DEMAND</span>
           <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
-            {navBtn("ask",    "Ask")}
-            {navBtn("market", "Market")}
-            {navBtn("chat",   "Chat")}
-            {navBtn("plus",   "Demand+")}
+            {navBtn("market", "Browse")}
+            {navBtn("chat",   "Messages")}
+            {navBtn("plus",   "Boost")}
             <span style={{ width: 1, height: 14, background: T.hairline }} />
             {/* City selector */}
             <div style={{ position: "relative" }}>
@@ -356,6 +355,13 @@ function AskView({ user, providers, onPings, goMarket }) {
   const [msgHistory, setMsgHistory] = useState([]);        // multi-turn [{role, content}] pairs
   const [followUpFiles, setFollowUpFiles] = useState([]);  // photos added during follow-up
   const [selectedBtns, setSelectedBtns] = useState([]);   // multi-select accumulator
+  const [miniFeed, setMiniFeed]         = useState([]);
+
+  useEffect(() => {
+    apiFetch("/api/demands")
+      .then(d => setMiniFeed((d || []).filter(x => ["open","bidding"].includes(x.status)).slice(0, 6)))
+      .catch(() => {});
+  }, []);
 
   const byId = id => providers.find(p => p.id === id);
 
@@ -615,6 +621,62 @@ function AskView({ user, providers, onPings, goMarket }) {
 
       {error && (
         <div className="rise" style={{ maxWidth: 680, margin: "16px auto 0", background: T.carbon, border: `1px solid ${T.steel}`, borderRadius: 12, padding: 14, color: T.silver, fontSize: 14 }}>{error}</div>
+      )}
+
+      {/* ── Popular strip + live feed (input step only) ── */}
+      {step === "input" && (
+        <div className="fade" style={{ maxWidth: 680, margin: "36px auto 0" }}>
+          {/* Quick-start suggestions */}
+          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1.2, color: T.ash, marginBottom: 10 }}>QUICK START</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 36 }}>
+            {[
+              { label: "Find a tutor",    prompt: "I need a tutor for " },
+              { label: "Sublet a room",   prompt: "I have a room to sublet " },
+              { label: "Help moving",     prompt: "I need help moving apartments " },
+              { label: "Airport ride",    prompt: "I need a ride to the airport " },
+              { label: "Sell textbooks",  prompt: "I want to sell my textbooks " },
+              { label: "Freelance design",prompt: "I need a designer for " },
+            ].map(s => (
+              <button key={s.label} onClick={() => setText(s.prompt)}
+                style={{ fontFamily: sans, fontSize: 13, color: T.silver, background: T.well, border: `1px solid ${T.hairline}`, borderRadius: 20, padding: "7px 16px", cursor: "pointer", transition: "all .15s" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = T.ice; e.currentTarget.style.color = T.chrome; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = T.hairline; e.currentTarget.style.color = T.silver; }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Live feed */}
+          {miniFeed.length > 0 && (
+            <>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: 1.2, color: T.ash }}>LIVE ON CAMPUS</div>
+                <button onClick={goMarket} style={{ fontFamily: mono, fontSize: 10, color: T.ice, background: "none", border: "none", cursor: "pointer", padding: 0 }}>Browse all →</button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {miniFeed.map((d, i) => {
+                  const dc = d.division ? DIV_COLOR[d.division] : T.ash;
+                  return (
+                    <div key={d.id} className="rise card-lift" onClick={goMarket}
+                      style={{ animationDelay: `${i * 40}ms`, background: T.card, border: `1px solid ${T.hairline}`, borderRadius: 12, padding: "13px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13.5, color: T.chrome, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 5 }}>
+                          {d.title || d.text}
+                        </div>
+                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                          {d.division && <span style={{ fontFamily: sans, fontSize: 10.5, color: dc, background: `${dc}18`, border: `1px solid ${dc}30`, borderRadius: 6, padding: "2px 7px", fontWeight: 500 }}>{DIV_LABEL[d.division] || d.division}</span>}
+                          <span style={{ fontFamily: mono, fontSize: 10, color: T.ash }}>{timeAgo(d.created_at)}</span>
+                          {d.offer_count > 0 && <span style={{ fontFamily: mono, fontSize: 10, color: "#E8B24A" }}>{d.offer_count} offer{d.offer_count > 1 ? "s" : ""}</span>}
+                        </div>
+                      </div>
+                      {d.budget && <span style={{ fontFamily: mono, fontSize: 13, color: T.silver, flexShrink: 0 }}>${d.budget}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       )}
 
       {/* ── Chat thread ── */}
